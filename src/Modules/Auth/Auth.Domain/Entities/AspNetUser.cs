@@ -1,4 +1,4 @@
-﻿namespace Auth.Domain.Entities;
+namespace Auth.Domain.Entities;
 
 public class AspNetUser
 {
@@ -16,4 +16,21 @@ public class AspNetUser
     public string UserName { get; set; } = default!;
     public int OrderBy { get; set; }
 
+    public bool IsLockedOut(DateTime nowUtc) => LockoutEndDateUtc is not null && LockoutEndDateUtc > nowUtc;
+
+    public void RegisterFailedLogin(DateTime nowUtc, int maxFailedAttempts, TimeSpan lockoutDuration)
+    {
+        AccessFailedCount++;
+        if (AccessFailedCount < maxFailedAttempts)
+            return;
+
+        LockoutEndDateUtc = nowUtc.Add(lockoutDuration);
+        AccessFailedCount = 0;
+    }
+
+    public void RegisterSuccessfulLogin()
+    {
+        AccessFailedCount = 0;
+        LockoutEndDateUtc = null;
+    }
 }

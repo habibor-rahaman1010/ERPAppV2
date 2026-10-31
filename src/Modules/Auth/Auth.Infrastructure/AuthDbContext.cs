@@ -13,6 +13,7 @@ public class AuthDbContext : DbContext
     public DbSet<UserRole> Roles => Set<UserRole>();
     public DbSet<UserType> Types => Set<UserType>();
     public DbSet<UserDepartment> Departments => Set<UserDepartment>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

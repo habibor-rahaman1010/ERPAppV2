@@ -21,6 +21,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Auth.Application", "src\Mod
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Auth.Infrastructure", "src\Modules\Auth\Auth.Infrastructure\Auth.Infrastructure.csproj", "{17A4864F-8A7C-4A4D-9610-D2FE4A9A40EE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth.Presentation", "src\Modules\Auth\Auth.Presentation\Auth.Presentation.csproj", "{AC00072D-841C-4E3C-801E-C265AAEB30FB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{56A11FC1-88B9-49B0-A315-D513E1AC0CFA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth.Tests", "tests\Modules\Auth\Auth.Tests\Auth.Tests.csproj", "{47595F68-993B-43F1-907A-BFA21D288047}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +57,14 @@ Global
 		{17A4864F-8A7C-4A4D-9610-D2FE4A9A40EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17A4864F-8A7C-4A4D-9610-D2FE4A9A40EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17A4864F-8A7C-4A4D-9610-D2FE4A9A40EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC00072D-841C-4E3C-801E-C265AAEB30FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC00072D-841C-4E3C-801E-C265AAEB30FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC00072D-841C-4E3C-801E-C265AAEB30FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC00072D-841C-4E3C-801E-C265AAEB30FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47595F68-993B-43F1-907A-BFA21D288047}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47595F68-993B-43F1-907A-BFA21D288047}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47595F68-993B-43F1-907A-BFA21D288047}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47595F68-993B-43F1-907A-BFA21D288047}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,5 +78,7 @@ Global
 		{D2922870-1630-4877-8B87-FF4F74C6FBAF} = {4DAAD25F-870F-45E9-99C2-75525A687A1C}
 		{50733E53-0F46-4C94-A631-01123D32B868} = {4DAAD25F-870F-45E9-99C2-75525A687A1C}
 		{17A4864F-8A7C-4A4D-9610-D2FE4A9A40EE} = {4DAAD25F-870F-45E9-99C2-75525A687A1C}
+		{AC00072D-841C-4E3C-801E-C265AAEB30FB} = {4DAAD25F-870F-45E9-99C2-75525A687A1C}
+		{47595F68-993B-43F1-907A-BFA21D288047} = {56A11FC1-88B9-49B0-A315-D513E1AC0CFA}
 	EndGlobalSection
 EndGlobal
