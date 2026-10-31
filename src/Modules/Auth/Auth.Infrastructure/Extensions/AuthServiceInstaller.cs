@@ -1,6 +1,8 @@
-﻿using Auth.Application.Interfaces;
+using Auth.Application.Interfaces;
 using Auth.Domain.Entities;
+using Auth.Infrastructure.Options;
 using Auth.Infrastructure.Services;
+using ERPApp.Shared.Abstractions.Security;
 using ERPApp.Shared.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -8,8 +10,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System.Diagnostics;
 using System.Text;
 
 namespace Auth.Infrastructure.Extensions;
@@ -18,8 +21,24 @@ public class AuthServiceInstaller : IServiceInstaller
 {
     public void InstallServices(IServiceCollection services, IConfiguration config)
     {
+        services.AddModuleDbContext<AuthDbContext>(config);
+
+        services.AddOptions<JwtOptions>()
+            .Bind(config.GetSection(JwtOptions.SectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+        services.AddOptions<AuthLockoutOptions>()
+            .Bind(config.GetSection(AuthLockoutOptions.SectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        services.TryAddSingleton(TimeProvider.System);
+        services.AddMemoryCache();
+
+        services.AddScoped<JwtTokenService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserPermissionService, UserPermissionService>();
+        services.AddScoped<IPermissionChecker, PermissionChecker>();
         services.AddScoped<IPasswordHasher<AspNetUser>, PasswordHasher<AspNetUser>>();
 
         #region Model State Error Handle
@@ -53,25 +72,29 @@ public class AuthServiceInstaller : IServiceInstaller
 
         #region JWT
 
-        var jwtSettings = config.GetSection("Jwt");
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         })
-        .AddJwtBearer(options =>
-        {
-            options.TokenValidationParameters = new TokenValidationParameters
+        .AddJwtBearer();
+
+        services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
+            .Configure<IOptions<JwtOptions>>((options, jwtOptions) =>
             {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = jwtSettings["Issuer"],
-                ValidAudience = jwtSettings["Audience"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]!))
-            };
-        });
+                var jwt = jwtOptions.Value;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwt.Issuer,
+                    ValidAudience = jwt.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key)),
+                    ClockSkew = TimeSpan.FromSeconds(30)
+                };
+            });
 
         #endregion
     }

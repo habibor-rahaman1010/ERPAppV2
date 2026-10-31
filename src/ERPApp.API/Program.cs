@@ -1,8 +1,6 @@
 ﻿using AspNetCoreRateLimit;
-using Auth.Infrastructure;
-using Auth.Infrastructure.Extensions;
 using ERApp.API.Extensions;
-using ERPApp.Shared.Interfaces;
+using ERPApp.Infrastructure.Modules;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -16,24 +14,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog();
 
-builder.Services.AddControllers();
+var moduleAssemblies = ModuleExtensions.LoadModuleAssemblies();
+
+builder.Services.AddControllers().AddModuleControllers(moduleAssemblies);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
-var installers = AppDomain.CurrentDomain
-    .GetAssemblies()
-    .SelectMany(assembly => assembly.GetTypes())
-    .Where(type => typeof(IServiceInstaller).IsAssignableFrom(type) && !type.IsAbstract && !type.IsInterface)
-    .Select(Activator.CreateInstance)
-    .Cast<IServiceInstaller>();
-
-foreach (var installer in installers)
-{
-    installer.InstallServices(builder.Services, builder.Configuration);
-}
+builder.Services.InstallModules(builder.Configuration, moduleAssemblies);
 
 builder.Services.AddCors(options =>
 {
@@ -47,7 +37,6 @@ builder.Services.AddCors(options =>
         });
 });
 
-builder.Services.AddModuleDbContext<AuthDbContext>(builder.Configuration);
 builder.Services.AddAuthorization();
 builder.Services.AddMemoryCache();
 builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));

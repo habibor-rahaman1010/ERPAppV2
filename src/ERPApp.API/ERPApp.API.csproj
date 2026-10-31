@@ -24,10 +24,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Modules\Auth\Auth.Application\Auth.Application.csproj" />
     <ProjectReference Include="..\ERPApp.Infrastructure\ERPApp.Infrastructure.csproj" />
     <ProjectReference Include="..\ERPApp.Shared\ERPApp.Shared.csproj" />
     <ProjectReference Include="..\Modules\Auth\Auth.Infrastructure\Auth.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Auth\Auth.Presentation\Auth.Presentation.csproj" />
   </ItemGroup>
 
 </Project>
